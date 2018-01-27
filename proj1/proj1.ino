@@ -31,7 +31,7 @@ void loop() {      // Main loop auto-repeats
   }
   
   if (is_running){
-    setSpeeds(200,200);    // Set velocity to left and right Servo
+    setSpeeds(200,-200);    // Set velocity to left and right Servo
     delay(100);                        
  
   } 
