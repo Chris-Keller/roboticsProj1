@@ -31,3 +31,7 @@ void setSpeeds(int microsLeft, int microsRight) {
 	RServo.writeMicroseconds(microsRight);
 
 }
+
+void setSpeedsRPS(float rpsLeft, float rpsRight){
+
+}
