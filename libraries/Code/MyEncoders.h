@@ -21,7 +21,11 @@ void getCounts(unsigned long counts[]);
 void getSpeeds(float speeds[]);
 
 //this function should include whatever code necessary to initialize this module
-void initEncoders();
 
+void riseAndFallR();
+
+void riseAndFallL();
+
+void initEncoders();
 
 #endif

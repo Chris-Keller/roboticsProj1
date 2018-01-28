@@ -9,8 +9,6 @@
 #include "MyServos.h"
 #include <Adafruit_RGBLCDShield.h>
 
-
-
 bool is_running = false;
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 
