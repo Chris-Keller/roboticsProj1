@@ -6,6 +6,7 @@
 
 //IF YOU WANT TO DECLARE VARIABLES VIEWABLE TO OTHER MODULE,
 //DECLARE THEM HERE USING THE KEYWORD extern, then declare them in the .cpp
+extern unsigned long time;
 
 //this function sets the tick counts to 0
 void resetCounts();
@@ -18,7 +19,7 @@ void getCounts(unsigned long counts[]);
 
 //this function should return the instantaneous speeds of the wheels
 //meassured in revolutions per second.
-float getSpeeds(float speeds[]);
+void getSpeeds(float speeds[]);
 
 //this function should include whatever code necessary to initialize this module
 

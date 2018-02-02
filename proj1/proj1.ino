@@ -1,13 +1,17 @@
 #include <EllipseParams.h>
 #include <ForwardParams.h>
+
 #include <MyEncoders.h>
 #include <MyServos.h>
 #include <SShapeParams.h>
 
 #include <Wire.h>
 
+
 #include "MyServos.h"
 #include <Adafruit_RGBLCDShield.h>
+
+
 
 bool is_running = false;
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
@@ -20,6 +24,8 @@ void setup() {
 }
 
 void loop() {      // Main loop auto-repeats
+
+  time = millis();
 
   if (!is_running){
    uint8_t buttons = lcd.readButtons();

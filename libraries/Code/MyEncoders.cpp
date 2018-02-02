@@ -6,19 +6,20 @@
 #define ENCODER_PORT_R 11  // right wheel encoder
 
 //needs global variable time
+
 unsigned long time;
-long dtL = -1;
-long dtR = -1;
-float speedL;
-float speedR;
-int countL = 0;
-int countR = 0;
-const float wheelCircum = 8.2;
-int changes = 64;
 
 namespace {
   //this is a nameless namespace
   //put here variables only viewable to this module
+	long dtL = -1;
+	long dtR = -1;
+	float speedL;
+	float speedR;
+	int countL = 0;
+	int countR = 0;
+	const float wheelCircum = 8.2;
+	int changes = 64;
 }
 
 void resetCounts() {
@@ -31,12 +32,11 @@ void getCounts(unsigned long counts[]) {
 	counts[1] = countR;
 }
 
-float getSpeeds(float speeds[]) {
+void getSpeeds(float speeds[]) {
 	//instintanious speed. distance over time.
 	speeds[0] = speedL;
 	speeds[1] = speedR;
 
-	return speeds[];
 }
 
 void riseAndFallL() {

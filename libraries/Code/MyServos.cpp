@@ -6,6 +6,7 @@
 Servo LServo;  // Declare Left servo
 Servo RServo;  // Declare right servo
 
+float tempspeed[2] = {0};
 
 namespace {
   //this is a nameless namespace
@@ -17,7 +18,8 @@ namespace {
    // [?][2] = IPS of Right Wheel
    // [?][3] = RPS of Right Wheel
    // This is a bit strange but I'm unclear on how much memory the arduino can handle
-   float speedtable[40][4];             
+   float speedtable[40][4];   
+
 
    const int MINSPEED = -200;
    const int MAXSPEED = 200;
@@ -143,9 +145,10 @@ void calibrate(){
    for (int i = MINSPEED; i <= MAXSPEED; i+= 10){
       setSpeeds(i, i);
 //      delay(1000);
-      speedtable[i][0] = getSpeeds[0];                            // Get IPS speed of L Wheel
+	  getSpeeds(tempspeed);
+      speedtable[i][0] = tempspeed[0];                            // Get IPS speed of L Wheel
       speedtable[i][1] = speedtable[i][0] / WHEEL_CIRCUM;         // Find Rev/Sec of L Wheel
-      speedtable[i][2] = getSpeeds[1];                            // Get IPS speed of R Wheel
+      speedtable[i][2] = tempspeed[1];                            // Get IPS speed of R Wheel
       speedtable[i][3] = speedtable[i][0] / WHEEL_CIRCUM;         // Find Rev/Sec of R Wheel
    }
 /*************************************************************
