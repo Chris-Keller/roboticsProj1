@@ -19,7 +19,8 @@ namespace {
 	int countL = 0;
 	int countR = 0;
 	const float wheelCircum = 8.2;
-	int changes = 64;
+	const float changes = 64;
+	const float arc_per_hole = wheelCircum / changes;
 }
 
 void resetCounts() {
@@ -41,28 +42,31 @@ void getSpeeds(float speeds[]) {
 
 void riseAndFallL() {
 	countL++;
-	Serial.println(countL);
+	//Serial.println(countL);
+	//Serial.print(time - dtL);
+	//Serial.print(" ");
 
 	if (dtL == -1) {
-		speedL = (wheelCircum / changes) / (time);
+		speedL = 1000 * arc_per_hole / (time);
 		dtL = time;
+
 	}
 	else {
-		speedL = (wheelCircum / changes) / (time - dtL);
+		speedL = 1000 * arc_per_hole / (time - dtL);
 		dtL = time;
 	}
 }
 
 void riseAndFallR() {
 	countR++;
-	Serial.println(countR);
+	//Serial.println(countR);
 
 	if (dtR == -1) {
-		speedR = (wheelCircum / changes) / (time);
+		speedR = 1000 * arc_per_hole / (time);
 		dtR = time;
 	}
 	else {
-		speedR = (wheelCircum / changes) / (time - dtR);
+		speedR = 1000 * arc_per_hole / (time - dtR);
 		dtR = time;
 	}
 }

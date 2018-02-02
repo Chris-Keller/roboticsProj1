@@ -55,10 +55,6 @@ void setupServo() {
 
 void setSpeeds(int microsLeft, int microsRight) {
 
-	microsLeft += 1500;
-	microsRight = -microsRight;
-	microsRight += 1500;
-
    if (microsLeft < -200)
       microsLeft = -200;
    if (microsRight < -200)
@@ -67,6 +63,12 @@ void setSpeeds(int microsLeft, int microsRight) {
       microsLeft = 200;
    if (microsRight > 200)
       microsRight = 200;
+
+	microsLeft += 1500;
+	microsRight = -microsRight;
+	microsRight += 1500;
+
+
 
 	LServo.writeMicroseconds(microsLeft);
 	RServo.writeMicroseconds(microsRight);
