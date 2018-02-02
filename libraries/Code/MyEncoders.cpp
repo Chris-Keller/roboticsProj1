@@ -31,10 +31,12 @@ void getCounts(unsigned long counts[]) {
 	counts[1] = countR;
 }
 
-void getSpeeds(float speeds[]) {
+float getSpeeds(float speeds[]) {
 	//instintanious speed. distance over time.
 	speeds[0] = speedL;
 	speeds[1] = speedR;
+
+	return speeds[];
 }
 
 void riseAndFallL() {

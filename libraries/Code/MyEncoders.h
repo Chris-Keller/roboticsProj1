@@ -18,7 +18,7 @@ void getCounts(unsigned long counts[]);
 
 //this function should return the instantaneous speeds of the wheels
 //meassured in revolutions per second.
-void getSpeeds(float speeds[]);
+float getSpeeds(float speeds[]);
 
 //this function should include whatever code necessary to initialize this module
 
