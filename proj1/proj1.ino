@@ -31,7 +31,7 @@ void loop() {      // Main loop auto-repeats
   }
   
   if (is_running){
-    setSpeeds(20,20);    // Set velocity to left and right Servo 
+    setSpeeds(10,10);    // Set velocity to left and right Servo 
 
   if (time % 50 == 0){
   Serial.print("Time: ");

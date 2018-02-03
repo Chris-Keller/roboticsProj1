@@ -29,6 +29,7 @@ namespace {
    const float WHEEL_CIRCUM = 8.2;
    const float MAXSPEED_REVPERSEC = 0.8;
 
+
    enum speedtableIndexes{IPS_LEFT,
          RPS_LEFT,
          IPS_RIGHT,
@@ -143,16 +144,51 @@ void setSpeedsvs(float v, float w){
 }
 
 void calibrate(){
+	// Filled by calibrate(), Table corresponds to -200 to 200 in 10 increments.
+	// [?][0] = IPS of Left Wheel
+	// [?][1] = RPS of Left Wheel
+	// [?][2] = IPS of Right Wheel
+	// [?][3] = RPS of Right Wheel
+	// This is a bit strange but I'm unclear on how much memory the arduino can handle
    // Store the IPS and RPS of each wheel for various input values into speedtable for use in setting accurate speeds in other functions
-   for (int i = MINSPEED; i <= MAXSPEED; i+= 10){
-      setSpeeds(i, i);
-//      delay(1000);
-	  getSpeeds(tempspeed);
-      speedtable[i][0] = tempspeed[0];                            // Get IPS speed of L Wheel
-      speedtable[i][1] = speedtable[i][0] / WHEEL_CIRCUM;         // Find Rev/Sec of L Wheel
-      speedtable[i][2] = tempspeed[1];                            // Get IPS speed of R Wheel
-      speedtable[i][3] = speedtable[i][0] / WHEEL_CIRCUM;         // Find Rev/Sec of R Wheel
-   }
+	short int samplesL = 0;
+	short int samplesR = 0;
+	unsigned long counts[2] = { 0 };
+	unsigned long countL = 0;
+	unsigned long countR = 0;
+	float speed[2] = { 0 };
+	float totalspdL = 0;
+	float totalspdR = 0;
+	unsigned long start_time = time;
+
+	for (int i = -20; i < 20; i++) {
+
+		setSpeeds(i * 10, i * 10);
+		while ((time - start_time) < 100);				// wait about 100 ms
+		while (samplesL <= 10 && samplesR <= 10) {
+			getCounts(counts);
+			if (countL != counts[0]) {
+				getSpeeds(speed);
+				totalspdL += speed[0];
+				samplesL++;
+				countL = counts[0];
+			}
+
+			if (countR != counts[1]) {
+				getSpeeds(speed);
+				totalspdR += speed[1];
+				samplesR++;
+				countR = counts[1];
+			}
+		}
+
+		speedtable[i][0] = totalspdL / samplesL;
+		speedtable[i][1] = speedtable[i][0] / WHEEL_CIRCUM;
+		speedtable[i][2] = totalspdR / samplesR;
+		speedtable[i][3] = speedtable[i][2] / WHEEL_CIRCUM;
+
+	}
+
 /*************************************************************
 
       DOUBLE CHECK UNITS ON THE IPS / WHEEL_CIRCUM OPERATION
