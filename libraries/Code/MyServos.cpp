@@ -2,6 +2,8 @@
 #include "MyServos.h"
 #include <Servo.h>
 #include "MyEncoders.h"
+#include <Arduino.h>
+#include <Adafruit_RGBLCDShield.h>
 
 Servo LServo;  // Declare Left servo
 Servo RServo;  // Declare right servo
@@ -135,6 +137,75 @@ void setSpeedsRPS(float rpsLeft, float rpsRight){
 
 void setSpeedsIPS(float ipsLeft, float ipsRight){
 // IPS = Inches per second
+	int microsLeft = -1;
+	int microsRight = -1;
+	float temp_L = 0;
+	float temp_R = 0;
+	bool found_left = false;
+	bool found_right = false;
+
+	if (ipsLeft == 0) {
+		found_left = true;
+		microsLeft = 0;
+	}
+	if (ipsRight == 0) {
+		found_right = true;
+		microsRight = 0;
+	}
+
+
+	for (int i = -20; i <= 20; i++) {
+
+		if (found_left == false) {
+			// Exact IPS match?  Return this speed
+			if (speedtable[i+20][IPS_LEFT] == ipsLeft) {
+				microsLeft = i * 10;
+				found_left = true;
+			}
+			else {
+				if (speedtable[i+20][IPS_LEFT] > ipsLeft) {
+					// target IPS is somewhere between temp_L and speedtable[i][1]
+					microsLeft = ((ipsLeft - temp_L) / (speedtable[i+20][IPS_LEFT] - temp_L) * 10) + ((i - 1) * 10);
+					found_left = true;
+				}
+				else {
+					// Target IPS hasn't been narrowed down yet.  Hold most recent IPS and check the next.
+					temp_L = speedtable[i+20][IPS_LEFT];
+				}
+			}
+		}
+	}
+
+
+	for (int i = -20; i <= 20; i++) {
+
+		if (found_right == false) {
+			// Exact IPS match?  Return this speed
+			if (speedtable[i + 20][IPS_RIGHT] == ipsRight) {
+				microsRight = i * 10;
+				found_right = true;
+			}
+			else {
+				if (speedtable[i + 20][IPS_RIGHT] > ipsRight) {
+					// target IPS is somewhere between temp_R and speedtable[i][IPS_RIGHT]
+					microsRight = ((ipsLeft - temp_R) / (speedtable[i + 20][IPS_RIGHT] - temp_R) * 10) + ((i - 1) * 10);
+					found_right = true;
+				}
+				else {
+					// Target IPS hasn't been narrowed down yet.  Hold most recent IPS and check the next.
+					temp_R = speedtable[i + 20][IPS_RIGHT];
+				}
+			}
+		}
+	}
+
+
+	if (microsLeft == -1)
+		microsLeft = 0;
+	if (microsRight == -1)
+		microsRight = 0;
+
+	setSpeeds(microsLeft, microsRight);
 }
 
 void setSpeedsvs(float v, float w){
@@ -143,56 +214,100 @@ void setSpeedsvs(float v, float w){
 
 }
 
-void calibrate(){
-	// Filled by calibrate(), Table corresponds to -200 to 200 in 10 increments.
-	// [?][0] = IPS of Left Wheel
-	// [?][1] = RPS of Left Wheel
-	// [?][2] = IPS of Right Wheel
-	// [?][3] = RPS of Right Wheel
-	// This is a bit strange but I'm unclear on how much memory the arduino can handle
-   // Store the IPS and RPS of each wheel for various input values into speedtable for use in setting accurate speeds in other functions
+void calibrate(Adafruit_RGBLCDShield* lcd){
+
+	lcd->setCursor(0, 0);
+	lcd->print("Calibrating.");
+	lcd->setCursor(0,1);
+	lcd->print("Samples: ");
+
 	short int samplesL = 0;
 	short int samplesR = 0;
 	unsigned long counts[2] = { 0 };
-	unsigned long countL = 0;
-	unsigned long countR = 0;
-	float speed[2] = { 0 };
-	float totalspdL = 0;
-	float totalspdR = 0;
-	unsigned long start_time = time;
+	double speed[2] = { 0 };
+	double totalspdL = 0;
+	double totalspdR = 0;
+	unsigned long last_time = 0;
 
 	for (int i = -20; i < 20; i++) {
+		lcd->setCursor(9, 1);
+		lcd->print(i + 20);
+		lcd->setCursor(11, 1);
+		lcd->print("/40");
 
+
+		if (i == 0) {
+			speedtable[20][0] = 0;
+			speedtable[20][1] = 0;
+			speedtable[20][2] = 0;
+			speedtable[20][3] = 0;
+			i++;
+		}
 		setSpeeds(i * 10, i * 10);
-		while ((time - start_time) < 100);				// wait about 100 ms
-		while (samplesL <= 10 && samplesR <= 10) {
+
+		unsigned long start_time = time;
+		while ((time - start_time) < 100)
+			time = millis();				// wait about 100 ms before taking readings
+		samplesL = 0;
+		samplesR = 0;
+		totalspdL = 0;
+		totalspdR = 0;
+
+		short int desired_sample_count = 50;
+		if (i > -3 and i < 3)
+			desired_sample_count = 20;
+
+
+		while (samplesL <= desired_sample_count and samplesR <= desired_sample_count) {
 			getCounts(counts);
-			if (countL != counts[0]) {
+			Serial.print("");
+
+			if (counts[0] > 0) {
 				getSpeeds(speed);
 				totalspdL += speed[0];
 				samplesL++;
-				countL = counts[0];
+				resetCounts();
 			}
 
-			if (countR != counts[1]) {
+			if (counts[1] > 0) {
 				getSpeeds(speed);
 				totalspdR += speed[1];
 				samplesR++;
-				countR = counts[1];
+				resetCounts();
 			}
 		}
+		if (i < 0) {
+			speedtable[i + 20][0] = -(totalspdL / samplesL);
+			speedtable[i + 20][2] = -(totalspdR / samplesR);
+		}
+		else {
+			speedtable[i + 20][0] = totalspdL / samplesL;
+			speedtable[i + 20][2] = totalspdR / samplesR;
+		}
 
-		speedtable[i][0] = totalspdL / samplesL;
-		speedtable[i][1] = speedtable[i][0] / WHEEL_CIRCUM;
-		speedtable[i][2] = totalspdR / samplesR;
-		speedtable[i][3] = speedtable[i][2] / WHEEL_CIRCUM;
+		if (i < 0) {
+			speedtable[i + 20][1] = speedtable[i + 20][0] / WHEEL_CIRCUM;
+			speedtable[i + 20][3] = speedtable[i + 20][2] / WHEEL_CIRCUM;
+		}
+		else {
+			speedtable[i + 20][1] = speedtable[i + 20][0] / WHEEL_CIRCUM;
+			speedtable[i + 20][3] = speedtable[i + 20][2] / WHEEL_CIRCUM;
+		}
+
 
 	}
 
-/*************************************************************
 
-      DOUBLE CHECK UNITS ON THE IPS / WHEEL_CIRCUM OPERATION
-
-*************************************************************/
+	for (int i = 0; i < 40; i++) {
+		Serial.print(i - 20);
+		Serial.print("\tIPS Left/Right: ");
+		Serial.print(speedtable[i][0]);
+		Serial.print(",");
+		Serial.print(speedtable[i][2]);
+		Serial.print("\tRPS Left/Right: ");
+		Serial.print(speedtable[i][1]);
+		Serial.print(",");
+		Serial.println(speedtable[i][3]);
+	}
 
 }

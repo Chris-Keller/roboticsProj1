@@ -7,20 +7,20 @@
 
 //needs global variable time
 
-unsigned long time;
+unsigned long time = 0;
 
 namespace {
   //this is a nameless namespace
   //put here variables only viewable to this module
 	long dtL = -1;
 	long dtR = -1;
-	float speedL;
-	float speedR;
+	double speedL;
+	double speedR;
 	int countL = 0;
 	int countR = 0;
-	const float wheelCircum = 8.2;
-	const float changes = 64;
-	const float arc_per_hole = wheelCircum / changes;
+	const double wheelCircum = 8.2;
+	const double changes = 64;
+	double arc_per_hole = wheelCircum / changes;
 }
 
 void resetCounts() {
@@ -33,7 +33,7 @@ void getCounts(unsigned long counts[]) {
 	counts[1] = countR;
 }
 
-void getSpeeds(float speeds[]) {
+void getSpeeds(double speeds[]) {
 	//instintanious speed. distance over time.
 	speeds[0] = speedL;
 	speeds[1] = speedR;
@@ -42,16 +42,16 @@ void getSpeeds(float speeds[]) {
 
 void riseAndFallL() {
 	countL++;
-	//Serial.println(countL);
-	//Serial.print(time - dtL);
-	//Serial.print(" ");
+	time = millis();
 
 	if (dtL == -1) {
 		speedL = 1000 * arc_per_hole / (time);
 		dtL = time;
-
 	}
 	else {
+//		Serial.print(time);
+//		Serial.print(",");
+//		Serial.println(dtL);
 		speedL = 1000 * arc_per_hole / (time - dtL);
 		dtL = time;
 	}
@@ -59,7 +59,7 @@ void riseAndFallL() {
 
 void riseAndFallR() {
 	countR++;
-	//Serial.println(countR);
+	time = millis();
 
 	if (dtR == -1) {
 		speedR = 1000 * arc_per_hole / (time);

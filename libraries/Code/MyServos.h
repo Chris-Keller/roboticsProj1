@@ -2,6 +2,7 @@
 
 #ifndef __MY_SERVOS__
 #define __MY_SERVOS__
+#include <Adafruit_RGBLCDShield.h>
 
 //NOTE: you are allowed to modify this file as long as the functions
 //implement the requested functionality
@@ -30,7 +31,7 @@ void setSpeedsIPS(float ipsLeft, float ipsRight);
 
 //this function is meant for doing whatever necessary for the 
 //functions 'setSpeedsIPS' and 'setSpeedsRPS' to work properly
-void calibrate();
+void calibrate(Adafruit_RGBLCDShield*);
 
 
 //this function should make the robot move with a linear speed of v 

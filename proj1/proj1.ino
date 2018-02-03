@@ -1,10 +1,10 @@
+#include <Adafruit_RGBLCDShield.h>
 #include <EllipseParams.h>
 #include <ForwardParams.h>
 #include <MyEncoders.h>
 #include <MyServos.h>
 #include <SShapeParams.h>
 #include <Wire.h>
-#include <Adafruit_RGBLCDShield.h>
 
 float testsp[2] = {0};
 bool is_running = false;
@@ -27,25 +27,22 @@ void loop() {      // Main loop auto-repeats
    uint8_t buttons = lcd.readButtons();
     if (buttons & BUTTON_SELECT){
       is_running = true;
+      calibrate(&lcd);
     }
   }
   
   if (is_running){
-    setSpeeds(10,10);    // Set velocity to left and right Servo 
+    setSpeeds(0,0);    // Set velocity to left and right Servo 
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Ready!");
+        delay(3000);
 
-  if (time % 50 == 0){
-  Serial.print("Time: ");
-  Serial.print(time);
-  Serial.print("\n");
-  Serial.print("Speed: l/r ");
-  getSpeeds(testsp);
-  Serial.print(testsp[0]);
-  Serial.print(" ");
-  Serial.print(testsp[1]);
-  Serial.print("\n");
+  lcd.clear();
+  lcd.print("Speed 3.00");
+  setSpeedsIPS(3.00,3.00);
+  delay(50000);
   }
- 
-  } 
 
 
 }
