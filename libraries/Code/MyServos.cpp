@@ -37,16 +37,6 @@ namespace {
          IPS_RIGHT,
          RPS_RIGHT
    };
-
-
-   /****************************************************
-
-               MANUALLY CHECK WHEEL DISTANCE
-                    AND DIAMETER VALUES!
-
-
-   *****************************************************/
-
 }
 
 void setupServo() {
@@ -81,58 +71,82 @@ void setSpeeds(int microsLeft, int microsRight) {
 void setSpeedsRPS(float rpsLeft, float rpsRight){
 // RPS = Revolutions per Second
 
-   int microsLeft = -1;
-   int microsRight = -1;
-   float temp_L = 0;
-   float temp_R = 0;
-   bool found_left = false;
-   bool found_right = false;
+	int microsLeft = -1;
+	int microsRight = -1;
+	float temp_L = 0;
+	float temp_R = 0;
+	bool found_left = false;
+	bool found_right = false;
+
+	if (rpsLeft == 0) {
+		found_left = true;
+		microsLeft = 0;
+	}
+	if (rpsRight == 0) {
+		found_right = true;
+		microsRight = 0;
+	}
 
 
-   for (int i = 0; i <= 40; i++){
+	for (int i = -20; i <= 20; i++) {
 
-      if (found_left == false){
-         // Exact RPS match?  Return this speed
-         if (speedtable[i][RPS_LEFT] == rpsLeft){
-            microsLeft = i * 10;
-            found_left = true;
-         } else {
-            if (speedtable[i][RPS_LEFT] > rpsLeft){
-               // target IPS is somewhere between temp_L and speedtable[i][1]
-               microsLeft = ((rpsLeft - temp_L) / (speedtable[i][RPS_LEFT] - temp_L)   *  10) + ((i-1) * 10);
-               found_left = true;
-            } else {
-               // Target IPS hasn't been narrowed down yet.  Hold most recent IPS and check the next.
-               temp_L = speedtable[i][RPS_LEFT];
-            }
-         }
-      }
+		if (found_left == false) {
+			// Exact RPS match?  Return this speed
+			if (speedtable[i + 20][RPS_LEFT] == rpsLeft) {
+				microsLeft = i * 10;
+				found_left = true;
+				
+			}
+			else {
+				if (speedtable[i + 20][RPS_LEFT] > rpsLeft) {
+					// target RPS is somewhere between temp_L and speedtable[i][1]
+					microsLeft = ((rpsLeft - temp_L) / (speedtable[i + 20][RPS_LEFT]) + (i - 1)) * 10;
+					found_left = true; 
+				}
+				else {
+					// Target RPS hasn't been narrowed down yet.  Hold most recent IPS and check the next.
+					temp_L = speedtable[i + 20][RPS_LEFT];
+				}
+			}
+		}
+	}
 
-      if (found_right == false){
-         // Exact RPS match?  Return this speed
-         if (speedtable[i][RPS_RIGHT] == rpsRight){
-            microsRight = i * 10;
-            found_right = true;
-         } else {
-            if (speedtable[i][RPS_RIGHT] > rpsRight){
-               // target IPS is somewhere between temp_L and speedtable[i][1]
-               microsRight = ((rpsRight - temp_R) / (speedtable[i][RPS_RIGHT] - temp_R)   *  10) + ((i-1) * 10);
-               found_right = true;
-            } else {
-               // Target IPS hasn't been narrowed down yet.  Hold most recent IPS and check the next.
-               temp_R = speedtable[i][RPS_RIGHT];
-            }
-         }
-      }
 
-   }
+	for (int i = -20; i <= 20; i++) {
 
-   if (microsLeft == -1)
-      microsLeft = 0;
-   if (microsRight == -1)
-      microsRight = 0;
+		if (found_right == false) {
+			// Exact RPS match?  Return this speed
+			if (speedtable[i + 20][RPS_RIGHT] == rpsRight) {
+				microsRight = i * 10;
+				found_right = true;
+			}
+			else {
+				if (speedtable[i + 20][RPS_RIGHT] > rpsRight) {
+					// target RPS is somewhere between temp_R and speedtable[i][IPS_RIGHT]
+					microsRight = ((rpsRight - temp_R) / (speedtable[i + 20][RPS_RIGHT]) + (i - 1)) * 10;
+					found_right = true;
+				}
+				else {
+					// Target RPS hasn't been narrowed down yet.  Hold most recent RPS and check the next.
+					temp_R = speedtable[i + 20][RPS_RIGHT];
+				}
+			}
+		}
+	}
 
-   setSpeeds(microsLeft, microsRight);
+
+	if (microsLeft == -1)
+		microsLeft = 0;
+	if (microsRight == -1)
+		microsRight = 0;
+
+	Serial.print("I believe left speed is ");
+	Serial.print(microsLeft);
+
+	Serial.print(", I believe right speed is ");
+	Serial.println(microsRight);
+	setSpeeds(microsLeft, microsRight);
+
 }
 
 void setSpeedsIPS(float ipsLeft, float ipsRight){

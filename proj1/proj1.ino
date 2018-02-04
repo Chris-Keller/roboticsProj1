@@ -32,6 +32,7 @@ void loop() {      // Main loop auto-repeats
   }
   
   if (is_running){
+    
     setSpeeds(0,0);    // Set velocity to left and right Servo 
     lcd.clear();
     lcd.setCursor(0,0);
@@ -39,9 +40,14 @@ void loop() {      // Main loop auto-repeats
         delay(3000);
 
   lcd.clear();
-  lcd.print("Speed 3.00");
-  setSpeedsIPS(3.00,3.00);
-  delay(50000);
+  lcd.print("Speed .30 RPS");
+  setSpeedsRPS(.30,.30);
+  delay(20000);
+
+    lcd.clear();
+  lcd.print("Speed .60 RPS");
+  setSpeedsRPS(.60,.60);
+  delay(20000);
   }
 
 
