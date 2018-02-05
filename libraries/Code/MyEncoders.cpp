@@ -34,7 +34,7 @@ void getCounts(unsigned long counts[]) {
 }
 
 void getSpeeds(double speeds[]) {
-	//instintanious speed. distance over time.
+	//instantaneous speed. distance over time in IPS
 	speeds[0] = speedL;
 	speeds[1] = speedR;
 
