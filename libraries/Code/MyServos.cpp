@@ -63,7 +63,8 @@ void setSpeeds(int microsLeft, int microsRight) {
 	microsRight += 1500;
 
 
-
+//	microsLeft = microsLeft / 2;
+//	microsRight = microsRight / 2;
 	LServo.writeMicroseconds(microsLeft);
 	RServo.writeMicroseconds(microsRight);
 
@@ -219,7 +220,7 @@ void setSpeedsIPS(float ipsLeft, float ipsRight){
 		microsLeft = 200;
 	if (microsRight == -1)
 		microsRight = 200;
-
+	
 	setSpeeds(microsLeft, microsRight);
 }
 
@@ -350,5 +351,4 @@ void calibrate(Adafruit_RGBLCDShield* lcd){
 		Serial.print(",");
 		Serial.println(speedtable[i][3]);
 	}
-
 }

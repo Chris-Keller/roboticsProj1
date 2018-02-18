@@ -1,0 +1,168 @@
+
+#include "MySharpSensor.h"
+#include <Arduino.h>
+#include <Adafruit_RGBLCDShield.h>
+
+
+namespace{
+
+	float buffer0[7] = {0};
+	float buffer1[7] = {0};
+	float buffer2[7] = {0};
+	float buffer3[7] = {0};
+	int count0 = 0;
+	int count1 = 0;
+	int count2 = 0;
+	int count3 = 0;
+  
+}
+
+
+
+float shortToInches(int value){
+
+	float inchess = ((float)value * (5.0/1023));
+	inchess = (inchess-0.4) * ((0.25-0.0334)/(2.65-0.4)) + 0.0334;
+	inchess = (1/inchess);
+	inchess = (inchess * 0.39);
+
+	return inchess;
+
+}
+
+
+float longToInches(int value){
+
+	float inchesl = ((float)value * (5.0/1023));
+	inchesl = (inchesl-0.4) * ((0.05-0.0066)/(2.45-0.4)) + 0.00667;
+	inchesl = (1/inchesl);
+	inchesl = (inchesl * 0.393);
+
+	return inchesl;
+
+}
+
+
+
+void takeNewMeasurement(int sensor){
+
+  //Serial.println("attempting to fill slot");
+  
+  if(sensor == 0){
+	buffer0[count0] = analogRead(A0);
+	if(count0 < 6)
+		count0++;
+	else
+		count0 = 0;
+  }
+  else if(sensor == 1){
+  	buffer1[count1] = analogRead(A1);
+  	if(count1 < 6)
+		count1++;
+	else
+		count1 = 0;
+  }
+  else if(sensor == 2){
+	buffer2[count2] = analogRead(A2);
+  	if(count2 < 6)
+		count2++;
+	else
+		count2 = 0;
+  }
+  else if(sensor == 3){
+	buffer3[count3] = analogRead(A3);
+    	if(count3 < 6)
+			count3++;
+		else
+			count3 = 0;
+  }
+  /*
+  for (int i = 0; i < 7; i++){
+	Serial.print(buffer3[i]);
+	Serial.print(" ");
+	}
+  Serial.println("");*/
+}
+
+
+
+float getCombinedDistace(int sensor){
+  //Serial.print("taking averages");
+  
+  float total = 0;
+
+
+  if(sensor == 0){
+	sort(buffer0);
+	for(int i = 0; i<3; i++){	
+		total += buffer0[i];
+	}
+  }
+  else if(sensor == 1){
+  	sort(buffer1);
+  	for(int i = 0; i<3; i++){	
+		total += buffer1[i];
+	}
+  }
+  else if(sensor == 2){
+  	sort(buffer2);
+  	for(int i = 0; i<3; i++){	
+		total += buffer2[i];
+	}
+  }
+  else if(sensor == 3){
+  	sort(buffer3);
+  	for(int i = 0; i<3; i++){	
+		total += buffer3[i];
+	}
+  }
+
+   /* for (int i = 0; i < 7; i++){
+		Serial.print(buffer3[i]);
+		Serial.print(" ");
+	}
+	Serial.print("\t");
+	Serial.print(total/3);
+    Serial.println("");*/
+
+  return (total/3);
+}
+
+
+void initDistanceSensors(){
+
+	float temp0 = analogRead(A0);
+	float temp1 = analogRead(A1);
+	float temp2 = analogRead(A2);
+	float temp3 = analogRead(A3);
+	
+	for(int i = 0; i < 7; i++){
+		buffer0[i] = temp0;
+		buffer1[i] = temp1;
+		buffer2[i] = temp2;
+		buffer3[i] = temp3;
+	}
+  
+}
+
+void sort(float * array){
+
+	float temp = 0;
+	bool sorted = false;
+	int hit = 0;
+
+	while(!sorted){
+		hit = 0;
+		for(int i=0; i < 6; i++){
+			if(array[i] > array [i+1]){
+				temp = array[i];
+				array[i] = array[i+1];
+				array[i+1] = temp;
+				hit++;
+			}
+		}
+		if(hit == 0)
+		sorted = true;
+
+	}
+}

@@ -1,6 +1,6 @@
 
 
-#define PARAM_X  55   //X inches
-#define PARAM_Y  10   //Y seconds
+#define PARAM_X  50   //X inches
+#define PARAM_Y  5   //Y seconds
 
 

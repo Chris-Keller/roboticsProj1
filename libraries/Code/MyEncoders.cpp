@@ -55,6 +55,7 @@ void riseAndFallL() {
 		speedL = 1000 * arc_per_hole / (time - dtL);
 		dtL = time;
 	}
+
 }
 
 void riseAndFallR() {
@@ -69,6 +70,7 @@ void riseAndFallR() {
 		speedR = 1000 * arc_per_hole / (time - dtR);
 		dtR = time;
 	}
+
 }
 
 void initEncoders() {
