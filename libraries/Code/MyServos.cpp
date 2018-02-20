@@ -314,6 +314,9 @@ void setSpeedsvw(float v, float w){
 
 		float Vr = v - w * WHEEL_DIST;
 		float Vl = Vr + 2 * w * WHEEL_DIST;
+		Serial.print(Vr);
+		Serial.print(", ");
+		Serial.println(Vl);
 
 	setSpeedsIPS(Vr, Vl);
 

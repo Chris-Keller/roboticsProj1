@@ -9,6 +9,8 @@
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 
 bool is_running = false;
+bool is_front_blocked = false;
+bool is_front_blocked_prev = false;
 uint8_t buttons;
 int count;
 float velocity = 6.00;
@@ -74,6 +76,8 @@ void loop() {
           corrected_speed = MAX_SPEED;
         if (corrected_speed < -MAX_SPEED)
           corrected_speed = -MAX_SPEED;
+        if (isnan(corrected_speed) or isinf(corrected_speed))
+          lcd.print("PANIC");
         setSpeedsIPS(corrected_speed, corrected_speed);
         
         lcd.setCursor(0,1);
@@ -87,6 +91,7 @@ void loop() {
     else if (buttons & BUTTON_LEFT){
       while (true){
         time = millis();
+        
         takeNewMeasurement(SLEFT);
         takeNewMeasurement(SSFRONT);
         takeNewMeasurement(SLONG);
@@ -112,33 +117,38 @@ void loop() {
           corrected_speed = -MAX_SPEED;
 
         // When we're close to the wall, curve away
-        if (frontreading < FRONT_GOAL_DISTANCE * 1.5)
+        if (frontreading < FRONT_GOAL_DISTANCE * 1.5){
           avoid_front = AVOID_FRONT;
-        else
+          corrected_speed = 0.00;
+          is_front_blocked = true;
+        } else {
           avoid_front = 1000.0;  // Large val that will be discarded in min();
-
+          is_front_blocked = false;
+        }
         avoid_left = (leftreading - SIDE_GOAL_DISTANCE) * K;   // From inches reading, get radians curve value
+
+
+
+        // If we're avoiding an obstacle in front, keep turning for a while even after the obstacle is no longer detected
+        if (!is_front_blocked and is_front_blocked_prev)
+          delay(250);
         
         float curve = min(avoid_left, avoid_front);
-        // If we are following wall, reduce speed slightly to accomodate curving
-        if (avoid_left * 0.99 < curve and curve < avoid_left * 1.01)
-          if (curve > 0)
-            corrected_speed -= curve; 
-          else 
-            corrected_speed += curve;
-          
         setSpeedsvw(corrected_speed, curve);
 
-        Serial.print("L/R Dist: ");
+
+/*
+        Serial.print("L/F Dist: ");
         Serial.print(leftreading);
         Serial.print(",");
         Serial.print(frontreading);
         Serial.print("\tSPD/Curve: ");
         Serial.print(corrected_speed);
         Serial.print(",");
-        Serial.println(curve);
+        Serial.println(curve);*/
         lcd.setCursor(0,1);
         lcd.print(avoid_left);
+        is_front_blocked_prev = is_front_blocked;
 
       }
   } else if (buttons & BUTTON_RIGHT){
