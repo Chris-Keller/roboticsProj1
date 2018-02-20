@@ -45,9 +45,104 @@ void setupServo() {
 	LServo.attach(2);  // Attach right servo to pin 2
 	RServo.attach(3);  // Attach right servo to pin 3
 
+speedtable[0][IPS_LEFT] = -6.00;
+speedtable[1][IPS_LEFT] = -5.91;
+speedtable[2][IPS_LEFT] = -5.85;
+speedtable[3][IPS_LEFT] = -5.80;
+speedtable[4][IPS_LEFT] = -5.76;
+speedtable[5][IPS_LEFT] = -5.69;
+speedtable[6][IPS_LEFT] = -5.59;
+speedtable[7][IPS_LEFT] = -5.48;
+speedtable[8][IPS_LEFT] = -5.37;
+speedtable[9][IPS_LEFT] = -5.19;
+speedtable[10][IPS_LEFT] = -4.98;
+speedtable[11][IPS_LEFT] = -4.67;
+speedtable[12][IPS_LEFT] = -4.33;
+speedtable[13][IPS_LEFT] = -3.85;
+speedtable[14][IPS_LEFT] = -3.39;
+speedtable[15][IPS_LEFT] = -2.78;
+speedtable[16][IPS_LEFT] = -2.25;
+speedtable[17][IPS_LEFT] = -1.66;
+speedtable[18][IPS_LEFT] = -1.13;
+speedtable[19][IPS_LEFT] = -0.65;
+speedtable[20][IPS_LEFT] = -0.09;
+speedtable[21][IPS_LEFT] = 0.00;
+speedtable[22][IPS_LEFT] = 0.40;
+speedtable[23][IPS_LEFT] = 0.92;
+speedtable[24][IPS_LEFT] = 1.50;
+speedtable[25][IPS_LEFT] = 2.04;
+speedtable[26][IPS_LEFT] = 2.69;
+speedtable[27][IPS_LEFT] = 3.16;
+speedtable[28][IPS_LEFT] = 3.72;
+speedtable[29][IPS_LEFT] = 4.10;
+speedtable[30][IPS_LEFT] = 4.50;
+speedtable[31][IPS_LEFT] = 4.81;
+speedtable[32][IPS_LEFT] = 5.11;
+speedtable[33][IPS_LEFT] = 5.29;
+speedtable[34][IPS_LEFT] = 5.45;
+speedtable[35][IPS_LEFT] = 5.61;
+speedtable[36][IPS_LEFT] = 5.74;
+speedtable[37][IPS_LEFT] = 5.81;
+speedtable[38][IPS_LEFT] = 5.88;
+speedtable[39][IPS_LEFT] = 5.93;
+speedtable[40][IPS_LEFT] = 6.00;
+
+speedtable[0][IPS_RIGHT] = -6.14;
+speedtable[1][IPS_RIGHT] = -6.12;
+speedtable[2][IPS_RIGHT] = -6.07;
+speedtable[3][IPS_RIGHT] = -6.00;
+speedtable[4][IPS_RIGHT] = -5.91;
+speedtable[5][IPS_RIGHT] = -5.77;
+speedtable[6][IPS_RIGHT] = -5.68;
+speedtable[7][IPS_RIGHT] = -5.51;
+speedtable[8][IPS_RIGHT] = -5.35;
+speedtable[9][IPS_RIGHT] = -5.08;
+speedtable[10][IPS_RIGHT] = -4.83;
+speedtable[11][IPS_RIGHT] = -4.41;
+speedtable[12][IPS_RIGHT] = -4.00;
+speedtable[13][IPS_RIGHT] = -3.39;
+speedtable[14][IPS_RIGHT] = -2.92;
+speedtable[15][IPS_RIGHT] = -2.28;
+speedtable[16][IPS_RIGHT] = -1.70;
+speedtable[17][IPS_RIGHT] = -1.20;
+speedtable[18][IPS_RIGHT] = -0.55;
+speedtable[19][IPS_RIGHT] = 0.00;
+speedtable[20][IPS_RIGHT] = 0.00;
+speedtable[21][IPS_RIGHT] = 0.00;
+speedtable[22][IPS_RIGHT] = 1.43;
+speedtable[23][IPS_RIGHT] = 1.76;
+speedtable[24][IPS_RIGHT] = 2.39;
+speedtable[25][IPS_RIGHT] = 2.99;
+speedtable[26][IPS_RIGHT] = 3.54;
+speedtable[27][IPS_RIGHT] = 4.05;
+speedtable[28][IPS_RIGHT] = 4.55;
+speedtable[29][IPS_RIGHT] = 4.93;
+speedtable[30][IPS_RIGHT] = 5.23;
+speedtable[31][IPS_RIGHT] = 5.44;
+speedtable[32][IPS_RIGHT] = 5.63;
+speedtable[33][IPS_RIGHT] = 5.76;
+speedtable[34][IPS_RIGHT] = 5.87;
+speedtable[35][IPS_RIGHT] = 5.95;
+speedtable[36][IPS_RIGHT] = 6.01;
+speedtable[37][IPS_RIGHT] = 6.06;
+speedtable[38][IPS_RIGHT] = 6.11;
+speedtable[39][IPS_RIGHT] = 6.12;
+speedtable[40][IPS_RIGHT] = 6.16;
+
+
+
 }
 
 void setSpeeds(int microsLeft, int microsRight) {
+/*
+Serial.print("Asked to set ");
+Serial.print(microsLeft);
+Serial.print(", ");
+Serial.println(microsRight);*/
+
+	microsLeft *= 0.65;
+	microsRight *= 0.65;
+
 
    if (microsLeft < -200)
       microsLeft = -200;
@@ -63,8 +158,6 @@ void setSpeeds(int microsLeft, int microsRight) {
 	microsRight += 1500;
 
 
-//	microsLeft = microsLeft / 2;
-//	microsRight = microsRight / 2;
 	LServo.writeMicroseconds(microsLeft);
 	RServo.writeMicroseconds(microsRight);
 
@@ -142,11 +235,6 @@ void setSpeedsRPS(float rpsLeft, float rpsRight){
 	if (microsRight == -1)
 		microsRight = 0;
 
-	Serial.print("I believe left speed is ");
-	Serial.print(microsLeft);
-
-	Serial.print(", I believe right speed is ");
-	Serial.println(microsRight);
 	setSpeeds(microsLeft, microsRight);
 
 }
@@ -160,33 +248,24 @@ void setSpeedsIPS(float ipsLeft, float ipsRight){
 	bool found_left = false;
 	bool found_right = false;
 
-	if (ipsLeft == 0.0) {
-		found_left = true;
-		microsLeft = 0;
-	}
-	if (ipsRight == 0.0) {
-		found_right = true;
-		microsRight = 0;
-	}
 
+	for (int i = 0; i <= 40; i++) {
 
-	for (int i = -20; i <= 20; i++) {
-
-		if (found_left == false) {
+		if (!found_left) {
 			// Exact IPS match?  Return this speed
-			if (speedtable[i+20][IPS_LEFT] == ipsLeft) {
-				microsLeft = i * 10;
+			if (speedtable[i][IPS_LEFT] == ipsLeft) {
+				microsLeft = (i-20) * 10;
 				found_left = true;
 			}
 			else {
-				if (speedtable[i+20][IPS_LEFT] > ipsLeft) {
+				if (speedtable[i][IPS_LEFT] > ipsLeft) {
 					// target IPS is somewhere between temp_L and speedtable[i][1]
-					microsLeft = ((ipsLeft - temp_L) / (speedtable[i+20][IPS_LEFT] - temp_L) * 10) + ((i - 1) * 10);
+					microsLeft = ((ipsLeft - temp_L) / (speedtable[i][IPS_LEFT] - temp_L) * 10) + ((i-20 - 1) * 10);
 					found_left = true;
 				}
 				else {
 					// Target IPS hasn't been narrowed down yet.  Hold most recent IPS and check the next.
-					temp_L = speedtable[i+20][IPS_LEFT];
+					temp_L = speedtable[i][IPS_LEFT];
 				}
 			}
 		}
@@ -224,9 +303,20 @@ void setSpeedsIPS(float ipsLeft, float ipsRight){
 	setSpeeds(microsLeft, microsRight);
 }
 
-void setSpeedsvs(float v, float w){
+void setSpeedsvw(float v, float w){
 // v is velocity in inches per second
 // w is angular velocity in radians per second
+// If asked to spin a wheel beyond topspeed, just reduce requested speed and repeat.
+        if (w > 1.00) 
+          w = 1.00;
+        if (w < -1.00)
+          w = -1.00;
+
+		float Vr = v - w * WHEEL_DIST;
+		float Vl = Vr + 2 * w * WHEEL_DIST;
+
+	setSpeedsIPS(Vr, Vl);
+
 
 }
 
@@ -262,20 +352,12 @@ void calibrate(Adafruit_RGBLCDShield* lcd){
 		totalspdL = 0;
 		totalspdR = 0;
 
-		short int desired_sample_count = 25;
+		short int desired_sample_count = 120;
 
 		time = millis();
 		start_time = time;
-		while (samplesL <= desired_sample_count or samplesR <= desired_sample_count) {
-			if (time - start_time > 2000) {
-				if (totalspdL < .5)
-					totalspdL = 0;
-				if (totalspdR < .5)
-					totalspdR = 0;
-				if (samplesL == 0)
-					samplesL = 1;
-				if (samplesR == 0)
-					samplesR == 1;
+		while (samplesL <= desired_sample_count and samplesR <= desired_sample_count) {
+			if (time - start_time > 60000) {
 				break;
 			}
 			getCounts(counts);
@@ -335,20 +417,30 @@ void calibrate(Adafruit_RGBLCDShield* lcd){
 	}
 
 	setSpeeds(0, 0);
+	Serial.println("\tIPS Left/Right: ");
 
 	for (int i = 0; i <= 40; i++) {
 		for (int j = 0; j <= 3; j++) {
 			if (isinf(speedtable[i][j]) or isnan(speedtable[i][j]))
 				speedtable[i][j] = 0.0;
 		}
-		Serial.print(i - 20);
-		Serial.print("\tIPS Left/Right: ");
+		Serial.print("speedtable[");
+		Serial.print(i);
+		Serial.print("][0] = ");
 		Serial.print(speedtable[i][0]);
-		Serial.print(",");
+		Serial.println(";");
+
+	}
+		for (int i = 0; i <= 40; i++) {
+		for (int j = 0; j <= 3; j++) {
+			if (isinf(speedtable[i][j]) or isnan(speedtable[i][j]))
+				speedtable[i][j] = 0.0;
+		}
+
+		Serial.print("speedtable[");
+		Serial.print(i);
+		Serial.print("][2] = ");
 		Serial.print(speedtable[i][2]);
-		Serial.print("\tRPS Left/Right: ");
-		Serial.print(speedtable[i][1]);
-		Serial.print(",");
-		Serial.println(speedtable[i][3]);
+		Serial.println(";");
 	}
 }

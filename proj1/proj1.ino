@@ -89,8 +89,28 @@ void loop() {      // Main loop auto-repeats
     }
 
 
+/*  if(buttons & BUTTON_UP){
+      Serial.println("Beginning Task 1");    
+      double myspd[2] = {0};
+      time = 0;
+      setSpeeds(0,100);
+    
+      while(time < 10000){
+        
+        time = millis();
+        if(time%30 == 0){
+    
+          if(time > 1000){
+    
+            getSpeeds(myspd);
+            Serial.println(myspd[1]);
+            }
+        } 
+      }
 
-
+    
+    }
+*/
 
 
 
@@ -163,9 +183,9 @@ void loop() {      // Main loop auto-repeats
       if (desired_left_speed_r1 < 3.80 and desired_right_speed_r1 > 4.40)
         desired_left_speed_r1 *= 1.1;
       if (desired_left_speed_r2 < 3.80 and desired_right_speed_r2 > 4.40)
-        desired_left_speed_r2 *= 1.1;*/
+        desired_left_speed_r2 *= 1.1;
       if (desired_right_speed_r1 < 3.80 and desired_left_speed_r1 > 4.40)
-        desired_right_speed_r1 *= 1.1;/*
+        desired_right_speed_r1 *= 1.1;
       if (desired_right_speed_r2 < 3.80 and desired_left_speed_r1 > 4.40)
         desired_right_speed_r2 *= 1.1;*/
 
