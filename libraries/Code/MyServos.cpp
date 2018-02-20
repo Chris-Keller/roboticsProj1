@@ -306,14 +306,25 @@ void setSpeedsIPS(float ipsLeft, float ipsRight){
 void setSpeedsvw(float v, float w){
 // v is velocity in inches per second
 // w is angular velocity in radians per second
-// If asked to spin a wheel beyond topspeed, just reduce requested speed and repeat.
         if (w > 1.00) 
           w = 1.00;
         if (w < -1.00)
           w = -1.00;
 
+
 		float Vr = v - w * WHEEL_DIST;
 		float Vl = Vr + 2 * w * WHEEL_DIST;
+
+		// In the case that we're asked to go over top speed, recalc with that wheel AT max speed
+		// This means we set robot to incorrect total velocity, but we get correct turning behavior
+		if (Vr > 6.00){
+			Vl = (2 * w * WHEEL_DIST) + 6.00;
+			Vr = 6.00;
+		} else if (Vl > 6.00) {
+			Vr = -(2 * w * WHEEL_DIST) + 6.00;
+			Vl = 6.00;
+		}
+
 		Serial.print(Vr);
 		Serial.print(", ");
 		Serial.println(Vl);

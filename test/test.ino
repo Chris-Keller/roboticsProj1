@@ -15,7 +15,7 @@ uint8_t buttons;
 int count;
 float velocity = 6.00;
 float K_FRONT = 1.5;
-float K = 0.30;
+float K = 0.20;
 float temp = 0.00;
 float FRONT_GOAL_DISTANCE = 5.00;
 float SIDE_GOAL_DISTANCE = 5.00;
