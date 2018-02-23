@@ -1,4 +1,4 @@
 
-#define PARAM_R1  10  //First radius in inches
-#define PARAM_R2  10  //Second radius in inches
-#define PARA_Y   7  //Y seconds
+#define PARAM_R1  20  //First radius in inches
+#define PARAM_R2  20  //Second radius in inches
+#define PARA_Y   30  //Y seconds

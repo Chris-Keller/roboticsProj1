@@ -27,7 +27,7 @@ namespace {
    const int MINSPEED = -200;
    const int MAXSPEED = 200;
    const float WHEEL_DIAM = 2.61;   // in inches
-   const float WHEEL_DIST = 3.95;   // how far apart wheels are from one another in inches
+   const float WHEEL_DIST = (3.95/2);   // how far apart wheels are from one another in inches
    const int HOLE_NUMBER = 64;
    const float WHEEL_CIRCUM = 8.2;
    const float MAXSPEED_REVPERSEC = 0.8;
@@ -67,7 +67,7 @@ speedtable[18][IPS_LEFT] = -1.13;
 speedtable[19][IPS_LEFT] = -0.65;
 speedtable[20][IPS_LEFT] = -0.09;
 speedtable[21][IPS_LEFT] = 0.00;
-speedtable[22][IPS_LEFT] = 0.40;
+speedtable[22][IPS_LEFT] = 0.35;
 speedtable[23][IPS_LEFT] = 0.92;
 speedtable[24][IPS_LEFT] = 1.50;
 speedtable[25][IPS_LEFT] = 2.04;
@@ -134,12 +134,12 @@ speedtable[40][IPS_RIGHT] = 6.16;
 }
 
 void setSpeeds(int microsLeft, int microsRight) {
-/*
+	/*
 Serial.print("Asked to set ");
 Serial.print(microsLeft);
 Serial.print(", ");
-Serial.println(microsRight);*/
-
+Serial.println(microsRight);
+*/
 	microsLeft *= 0.65;
 	microsRight *= 0.65;
 
@@ -241,8 +241,8 @@ void setSpeedsRPS(float rpsLeft, float rpsRight){
 
 void setSpeedsIPS(float ipsLeft, float ipsRight){
 // IPS = Inches per second
-	int microsLeft = -1;
-	int microsRight = -1;
+	int microsLeft = -1000;
+	int microsRight = -1000;
 	float temp_L = 0;
 	float temp_R = 0;
 	bool found_left = false;
@@ -295,21 +295,24 @@ void setSpeedsIPS(float ipsLeft, float ipsRight){
 	}
 
 
-	if (microsLeft == -1)
+	if (microsLeft == -1000)
 		microsLeft = 200;
-	if (microsRight == -1)
+	if (microsRight == -1000)
 		microsRight = 200;
-	
+	if (ipsRight < 0.5 and ipsRight > 0.0)
+		microsRight *= 0.70;
+
 	setSpeeds(microsLeft, microsRight);
 }
 
 void setSpeedsvw(float v, float w){
 // v is velocity in inches per second
 // w is angular velocity in radians per second
-        if (w > 1.00) 
-          w = 1.00;
-        if (w < -1.00)
-          w = -1.00;
+	/*
+        if (w > .7500) 
+          w = .750;
+        if (w < -.7500)
+          w = -.7500;*/
 
 
 		float Vr = v - w * WHEEL_DIST;
@@ -324,13 +327,13 @@ void setSpeedsvw(float v, float w){
 			Vr = -(2 * w * WHEEL_DIST) + 6.00;
 			Vl = 6.00;
 		}
-
+/*
 		Serial.print(Vr);
 		Serial.print(", ");
 		Serial.println(Vl);
-
+		*/
 	setSpeedsIPS(Vr, Vl);
-
+	
 
 }
 

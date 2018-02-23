@@ -78,14 +78,14 @@ void takeNewMeasurement(int sensor){
   }
   /*
   for (int i = 0; i < 7; i++){
-	Serial.print(buffer3[i]);
+	Serial.print(shortToInches(buffer0[i]));
 	Serial.print(" ");
 	}
   Serial.println("");*/
 }
 
 
-
+// Our implementation takes 7 readings, discards the highest four, and averages the remaining three.
 float getCombinedDistace(int sensor){
   //Serial.print("taking averages");
   
@@ -116,15 +116,15 @@ float getCombinedDistace(int sensor){
 		total += buffer3[i];
 	}
   }
-
-   /* for (int i = 0; i < 7; i++){
-		Serial.print(buffer3[i]);
+  /*
+    for (int i = 0; i < 7; i++){
+		Serial.print(buffer0[i]);
 		Serial.print(" ");
 	}
 	Serial.print("\t");
 	Serial.print(total/3);
-    Serial.println("");*/
-
+    Serial.println("");
+	*/
   return (total/3);
 }
 
