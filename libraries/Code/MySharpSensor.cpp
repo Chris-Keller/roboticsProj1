@@ -5,11 +5,11 @@
 
 
 namespace{
-
-	float buffer0[7] = {0};
-	float buffer1[7] = {0};
-	float buffer2[7] = {0};
-	float buffer3[7] = {0};
+	short const int BUFFER_SIZE = 8;	// Use an even number.  Odd numbers will need ceil() on divisions, probably
+	float buffer0[BUFFER_SIZE] = {0};
+	float buffer1[BUFFER_SIZE] = {0};
+	float buffer2[BUFFER_SIZE + 1] = {0};	// This sensor returns much worse values, this one will use the median of BUFFERSIZE + 1
+	float buffer3[BUFFER_SIZE] = {0};
 	int count0 = 0;
 	int count1 = 0;
 	int count2 = 0;
@@ -50,28 +50,29 @@ void takeNewMeasurement(int sensor){
   
   if(sensor == 0){
 	buffer0[count0] = analogRead(A0);
-	if(count0 < 6)
+	if(count0 < BUFFER_SIZE - 1)
 		count0++;
 	else
 		count0 = 0;
   }
   else if(sensor == 1){
   	buffer1[count1] = analogRead(A1);
-  	if(count1 < 6)
+  	if(count1 < BUFFER_SIZE - 1)
 		count1++;
 	else
 		count1 = 0;
   }
   else if(sensor == 2){
+	// THIS SENSOR HAS BEEN OBSERVED TO RETURN LOW-OUTLIERS
 	buffer2[count2] = analogRead(A2);
-  	if(count2 < 6)
+  	if(count2 < BUFFER_SIZE)
 		count2++;
 	else
 		count2 = 0;
   }
   else if(sensor == 3){
 	buffer3[count3] = analogRead(A3);
-    	if(count3 < 6)
+    	if(count3 < BUFFER_SIZE - 1)
 			count3++;
 		else
 			count3 = 0;
@@ -85,7 +86,8 @@ void takeNewMeasurement(int sensor){
 }
 
 
-// Our implementation takes 7 readings, discards the highest four, and averages the remaining three.
+// Our implementation takes BUFFER_SIZE readings, discards the half with highest values, and returns average of remaining.
+// NOTE: The RIGHT short sensor uses 2 extra readings due to observed increased volatility
 float getCombinedDistace(int sensor){
   //Serial.print("taking averages");
   
@@ -94,25 +96,25 @@ float getCombinedDistace(int sensor){
 
   if(sensor == 0){
 	sort(buffer0);
-	for(int i = 0; i<3; i++){	
+	for(int i = 0; i<BUFFER_SIZE / 2; i++){
 		total += buffer0[i];
 	}
   }
   else if(sensor == 1){
   	sort(buffer1);
-  	for(int i = 0; i<3; i++){	
+  	for(int i = 0; i<BUFFER_SIZE / 2; i++){
 		total += buffer1[i];
 	}
   }
   else if(sensor == 2){
+	  // THIS SENSOR HAS BEEN OBSERVED TO RETURN LOW-OUTLIERS
+	  // Discard top/bottom value, return average of remaining
   	sort(buffer2);
-  	for(int i = 0; i<3; i++){	
-		total += buffer2[i];
-	}
+	return (buffer2[3]);
   }
   else if(sensor == 3){
   	sort(buffer3);
-  	for(int i = 0; i<3; i++){	
+  	for(int i = 0; i<BUFFER_SIZE / 2; i++){
 		total += buffer3[i];
 	}
   }
@@ -125,7 +127,7 @@ float getCombinedDistace(int sensor){
 	Serial.print(total/3);
     Serial.println("");
 	*/
-  return (total/3);
+  return (total / (BUFFER_SIZE /2));
 }
 
 
@@ -136,7 +138,7 @@ void initDistanceSensors(){
 	float temp2 = analogRead(A2);
 	float temp3 = analogRead(A3);
 	
-	for(int i = 0; i < 7; i++){
+	for(int i = 0; i < BUFFER_SIZE; i++){
 		buffer0[i] = temp0;
 		buffer1[i] = temp1;
 		buffer2[i] = temp2;
@@ -153,7 +155,7 @@ void sort(float * array){
 
 	while(!sorted){
 		hit = 0;
-		for(int i=0; i < 6; i++){
+		for(int i=0; i < BUFFER_SIZE - 1; i++){
 			if(array[i] > array [i+1]){
 				temp = array[i];
 				array[i] = array[i+1];

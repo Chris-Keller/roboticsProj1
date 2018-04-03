@@ -9,7 +9,7 @@
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 
 
-float K_FRONT = 0.20;
+float K_FRONT = 0.90;
 float K = 0.35;
 bool is_running = false;
 uint8_t buttons;
